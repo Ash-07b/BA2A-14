@@ -1,0 +1,50 @@
+< ?php
+// Include the classes above here…
+
+$selectedType = $_GET[‘discount’] ?? ‘none’ ;
+
+// Decide which strategy to inject based on user input
+Switch ($selectedType) {
+    Case ‘ten_percent’ :
+        $strategy = new TenPercentDiscount() ;
+        Break ;
+    Case ‘flat_five’ :
+        $strategy = new FlatFiveDollarDiscount() ;
+        Break ;
+    Default :
+        $strategy = new NoDiscount() ;
+}
+
+$cart = new ShoppingCart($strategy) ;
+?>
+
+< !DOCTYPE html>
+<html lang= »en »>
+<head>
+    <title>PHP Strategy Pattern Demo</title>
+    <style>
+        Body { font-family : sans-serif ; padding : 20px ; line-height : 1.6 ; }
+        .box { border : 1px solid #ccc ; padding : 20px ; border-radius : 8px ; max-width : 400px ; }
+        .price { font-size : 1.5em ; color : green ; font-weight : bold ; }
+    </style>
+</head>
+<body>
+    <h2>Checkout</h2>
+    <div class= »box »>
+        <p>Base Price : <strong>$50.00</strong></p>
+        
+        <form method= »GET »>
+            <label for= »discount »>Select Discount :</label>
+            <select name= »discount » id= »discount » onchange= »this.form.submit() »>
+                <option value= »none » < ?= $selectedType == ‘none’ ? ‘selected’ : ‘’ ?>>No Discount</option>
+                <option value= »ten_percent » < ?= $selectedType == ‘ten_percent’ ? ‘selected’ : ‘’ ?>>10% Off</option>
+                <option value= »flat_five » < ?= $selectedType == ‘flat_five’ ? ‘selected’ : ‘’ ?>>$5 Flat Discount</option>
+            </select>
+        </form>
+
+        <hr>
+        <p>Your Final Price :</p>
+        <div class= »price »>$ <?= number_format($cart->getFinalPrice(), 2) ?></div>
+    </div>
+</body>
+</html>
